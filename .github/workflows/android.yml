@@ -1,0 +1,18 @@
+name: Build V32
+on: [push, workflow_dispatch]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { java-version: '17', distribution: 'zulu' }
+      - name: Generate Wrapper and Build
+        run: |
+          # Cette étape installe Gradle et crée le fichier gradlew manquant
+          gradle wrapper --gradle-version 8.7
+          chmod +x gradlew
+          ./gradlew assembleDebug
+          mv app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/BT-PRO-V32.apk
+      - uses: actions/upload-artifact@v4
+        with: { name: BT-PRO-V32, path: app/build/outputs/apk/debug/BT-PRO-V32.apk }
